@@ -145,6 +145,22 @@ alter table public.conversation_members enable row level security;
 alter table public.messages enable row level security;
 alter table public.persona_memories enable row level security;
 
+-- SECURITY DEFINER avoids recursive RLS evaluation when checking conversation membership.
+create or replace function public.is_conversation_member(p_conversation_id uuid, p_user_id uuid default auth.uid())
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $
+  select exists (
+    select 1 from public.conversation_members cm
+    where cm.conversation_id = p_conversation_id and cm.user_id = p_user_id
+  );
+$;
+revoke all on function public.is_conversation_member(uuid, uuid) from public;
+grant execute on function public.is_conversation_member(uuid, uuid) to authenticated;
+
 -- Public, read-only social surfaces for signed-in users.
 create policy "profiles are readable" on public.profiles for select to authenticated using (true);
 create policy "users create own profile" on public.profiles for insert to authenticated with check (id = auth.uid());
@@ -173,20 +189,21 @@ create policy "users read own saves" on public.saved_posts for select to authent
 create policy "users save as self" on public.saved_posts for insert to authenticated with check (user_id = auth.uid());
 create policy "users unsave as self" on public.saved_posts for delete to authenticated using (user_id = auth.uid());
 
--- Conversation/message policies rely on membership. AI responses are written server-side.
+-- Conversation/message policies rely on a SECURITY DEFINER membership helper.
+-- AI responses are written server-side.
 create policy "members read conversations" on public.conversations for select to authenticated using (
-  exists (select 1 from public.conversation_members cm where cm.conversation_id = id and cm.user_id = auth.uid())
+  public.is_conversation_member(conversations.id, auth.uid())
 );
 create policy "members read memberships" on public.conversation_members for select to authenticated using (
-  exists (select 1 from public.conversation_members mine where mine.conversation_id = conversation_id and mine.user_id = auth.uid())
+  public.is_conversation_member(conversation_members.conversation_id, auth.uid())
 );
 create policy "users join conversation as self" on public.conversation_members for insert to authenticated with check (user_id = auth.uid() and persona_id is null);
 create policy "members read messages" on public.messages for select to authenticated using (
-  exists (select 1 from public.conversation_members cm where cm.conversation_id = conversation_id and cm.user_id = auth.uid())
+  public.is_conversation_member(messages.conversation_id, auth.uid())
 );
 create policy "users send own messages" on public.messages for insert to authenticated with check (
   sender_user_id = auth.uid() and sender_persona_id is null and is_ai_generated = false and
-  exists (select 1 from public.conversation_members cm where cm.conversation_id = conversation_id and cm.user_id = auth.uid())
+  public.is_conversation_member(messages.conversation_id, auth.uid())
 );
 create policy "users read own persona memories" on public.persona_memories for select to authenticated using (about_user_id = auth.uid());
 
