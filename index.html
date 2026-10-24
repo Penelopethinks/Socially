@@ -245,8 +245,10 @@ function sociallyFreshContent(){
  const visitId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
  const recentlyUsed=new Set();
  try{JSON.parse(localStorage.getItem('socially-recent-photo-ids')||'[]').forEach(x=>recentlyUsed.add(x))}catch(e){}
- let available=sociallyPhotoLibrary.filter(x=>!recentlyUsed.has(x[0]));
- if(available.length<24){recentlyUsed.clear();available=sociallyPhotoLibrary.slice()}
+ const photoMap=new Map();sociallyPhotoLibrary.forEach(item=>{if(!photoMap.has(item[0]))photoMap.set(item[0],item)});
+ const allPhotos=Array.from(photoMap.values());
+ let available=allPhotos.filter(x=>!recentlyUsed.has(x[0]));
+ if(available.length<24){recentlyUsed.clear();available=allPhotos.slice()}
  for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]]}
  const chosen=available.slice(0,24);
  const people=state.people.filter(p=>p.id.startsWith('community'));
@@ -270,6 +272,36 @@ function sociallyFreshContent(){
  try{localStorage.setItem('socially-recent-photo-ids',JSON.stringify(nextRecent))}catch(e){}
  persist();
 }
+
+function sociallyLoadMore(){
+ const recentlyUsed=new Set();
+ try{JSON.parse(localStorage.getItem('socially-recent-photo-ids')||'[]').forEach(x=>recentlyUsed.add(x))}catch(e){}
+ const photoMap=new Map();sociallyPhotoLibrary.forEach(item=>{if(!photoMap.has(item[0]))photoMap.set(item[0],item)});
+ let available=Array.from(photoMap.values()).filter(x=>!recentlyUsed.has(x[0]));
+ if(available.length<8){available=Array.from(photoMap.values());recentlyUsed.clear()}
+ for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]]}
+ const chosen=available.slice(0,8);
+ const people=state.people.filter(p=>p.id.startsWith('community'));
+ for(let i=people.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[people[i],people[j]]=[people[j],people[i]]}
+ const visitId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+ const posts=chosen.map((item,i)=>{const person=people[(i+Math.floor(Math.random()*people.length))%people.length];const caption=sociallyPostFormats[Math.floor(Math.random()*sociallyPostFormats.length)](item[2]);return {id:'more-'+visitId+'-'+i,user:person.id,image:'https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1100&q=88',caption:caption+' '+['#newfinds','#littlemoments','#yourturn','#inspirationstation','#socially'][Math.floor(Math.random()*5)],location:person.location||'Somewhere lovely',time:'just now',likes:5+Math.floor(Math.random()*700),liked:false,saved:false,comments:[],visitGenerated:true,filterName:['none','bright','warm','soft','vivid'][Math.floor(Math.random()*5)]}});
+ state.posts=state.posts.concat(posts);
+ const nextRecent=[...chosen.map(x=>x[0]),...Array.from(recentlyUsed)].slice(0,24);
+ try{localStorage.setItem('socially-recent-photo-ids',JSON.stringify(nextRecent))}catch(e){}
+ persist();renderFeed();renderExplore();
+}
+let sociallyLoadingMore=false;
+let sociallyLastLoadHeight=0;
+window.addEventListener('scroll',()=>{
+ if(sociallyLoadingMore)return;
+ const height=document.documentElement.scrollHeight;
+ if(window.innerHeight+window.scrollY>=height-850 && height>sociallyLastLoadHeight+100){
+  sociallyLoadingMore=true;sociallyLastLoadHeight=height;
+  sociallyLoadMore();
+  sociallyLoadingMore=false;
+ }
+},{passive:true});
+
 function sociallyEditorFilter(){
  const preset=$('#postFilter')?.value||'none',brightness=Number($('#postBrightness')?.value||100),saturation=Number($('#postSaturation')?.value||100);
  const presets={none:'',bright:'brightness(1.08) contrast(1.03)',warm:'sepia(.12) saturate(1.12)',soft:'brightness(1.08) saturate(.82) contrast(.94)',vivid:'saturate(1.35) contrast(1.04)',mono:'grayscale(1)',film:'sepia(.22) saturate(.9) contrast(.94)'};
