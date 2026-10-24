@@ -163,6 +163,10 @@ function sociallyAddProfiles(){
   state.people.push({id,name,handle,bio:interest.bio,avatar,kind:'ai',role:'The '+interest.topic.toLowerCase()+' enthusiast',interests:interest.tags.slice(),followers:75+((i*37)%4200),following:60+((i*19)%900),location:['Spokane, WA','Portland, OR','Seattle, WA','Austin, TX','Denver, CO','San Diego, CA','Chicago, IL','Boston, MA'][i%8],memory:'Enjoys '+interest.tags.join(', ').toLowerCase()+'. '+interest.bio,followingByYou:false});
  }
 }
+function sociallyCleanLegacyAvatars(){
+ const feminineNames=new Set(['sophie','emma','olivia','ava','mia','isabella','sophia','charlotte','amelia','harper','evelyn','abigail','emily','elizabeth','sofia','grace','chloe','ella','scarlett','lily','hannah','aria','zoe','nora','ellie','stella','lucy','ruby','penelope','mila','hazel','layla','aurora','violet','alice','claire','maya','sadie','anna','leah','natalie','audrey','brooklyn','savannah','bella','sarah','elena','jessica','madison','addison','paisley','skylar','everly','ivy','willow','luna','piper','quinn','reese','taylor','jasmine','allison','katherine','lauren','molly','rose','juliet','faith','daisy','summer','cora','lola','june','delilah','freya','athena','morgan','riley','bailey','mackenzie','kennedy','jordan','kendall','blake','payton','teagan','kylie','sienna','clara','isla','sadie','nina','anastasia','alina','maria','camila','valentina','gabriella','victoria','melody','lydia','julia','serena','sabrina','paige','phoebe','laura','brooke','kate','michelle','natalia','sarah','lillian','allie','ivy','mckenna','lila','madeline','adeline','juliana','danielle','diana','alexandra','miriam','jane','mary','christina','caroline','francesca','poppy','maisie','freya','imogen','georgia','sloane','marley','wren','blair','noelle','celeste','bianca','eve','lyra','marina','kira','sasha','melissa','jocelyn','tessa','lena','mina','yuna','ayla','naomi','anaya','zara','aisha','fatima','priya','anika','keira','maia','sarah','talia','esme','elise','heidi','livia','margot','frankie','annie','jenny','jules','alexis','kimberly','brielle','brianna','jennifer','kelsey','megan','rebecca','rachel','amanda','ashley','amber','chelsea','courtney','kristen','erin','heather','paula','susan','donna','wendy','linda','patricia','carla','sylvia','gloria','teresa','irene','edith','marie','marilyn','joanna','joelle','daphne','robin','shannon','casey','devon','sam','alex']);
+ state.people.forEach(p=>{if(!/^extra\\d+$/.test(p.id))return;const first=(p.name||'').split(' ')[0].toLowerCase();const gender=feminineNames.has(first)?'women':'men';const number=(parseInt(p.id.replace('extra',''),10)%99)+1;p.avatar='https://randomuser.me/api/portraits/'+gender+'/'+number+'.jpg'});
+}
 function sociallyFreshContent(){
  const visitId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
  const shuffled=state.people.filter(p=>p.id.startsWith('community')).sort(()=>Math.random()-.5).slice(0,12);
@@ -201,6 +205,7 @@ function sociallyInstallEditor(){
  document.addEventListener('click',e=>{const link=e.target.closest('[data-open-profile]');if(link){profileId=link.dataset.openProfile;go('profile')}});
 }
 sociallyAddProfiles();
+sociallyCleanLegacyAvatars();
 sociallyFreshContent();
 sociallyInstallEditor();
 
