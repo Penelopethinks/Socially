@@ -364,12 +364,12 @@ function sociallyApplyAppearance(settings){
  const preview=$('#appearancePreview');if(preview){preview.style.setProperty('--preview-bg',t.preview);preview.style.setProperty('--preview-card',t.paper);preview.style.setProperty('--preview-ink',t.ink)}
 }
 function sociallyReadAppearance(){try{return JSON.parse(localStorage.getItem('socially-appearance-v1')||'{}')}catch(e){return {}}}
-function sociallyUpdateAppearancePreview(){sociallyApplyAppearance({theme:$('#appThemeInput').value,textSize:$('#appTextSizeInput').value,corners:$('#appCornersInput').value})}
+function sociallyUpdateAppearancePreview(){const t=sociallyAppThemes[$('#appThemeInput').value]||sociallyAppThemes.blossom,preview=$('#appearancePreview'),card=preview?.querySelector('.preview-card');if(preview){preview.style.setProperty('--preview-bg',t.preview);preview.style.setProperty('--preview-card',t.paper);preview.style.setProperty('--preview-ink',t.ink)}if(card){card.style.borderRadius=$('#appCornersInput').value==='round'?'28px':$('#appCornersInput').value==='square'?'5px':'19px';card.style.fontSize=(Number($('#appTextSizeInput').value)||14)+'px'}}
 function sociallyOpenAppearance(){const a={theme:'blossom',textSize:'14',corners:'soft',...sociallyReadAppearance()};$('#appThemeInput').value=a.theme;$('#appTextSizeInput').value=a.textSize;$('#appCornersInput').value=a.corners;sociallyUpdateAppearancePreview();$('#appearanceModal').classList.add('open')}
 $('#openAppearance').addEventListener('click',sociallyOpenAppearance);
 ['appThemeInput','appTextSizeInput','appCornersInput'].forEach(id=>$('#'+id).addEventListener('input',sociallyUpdateAppearancePreview));
 $('#appearanceForm').addEventListener('submit',e=>{e.preventDefault();const a={theme:$('#appThemeInput').value,textSize:$('#appTextSizeInput').value,corners:$('#appCornersInput').value};try{localStorage.setItem('socially-appearance-v1',JSON.stringify(a))}catch(err){}sociallyApplyAppearance(a);closeModal('appearanceModal');toast('Your Socially look is saved ✨')});
-$('#resetAppearance').addEventListener('click',()=>{const a={theme:'blossom',textSize:'14',corners:'soft'};$('#appThemeInput').value=a.theme;$('#appTextSizeInput').value=a.textSize;$('#appCornersInput').value=a.corners;sociallyApplyAppearance(a);try{localStorage.removeItem('socially-appearance-v1')}catch(e){}sociallyUpdateAppearancePreview();toast('Back to the original look')});
+$('#resetAppearance').addEventListener('click',()=>{const a={theme:'blossom',textSize:'14',corners:'soft'};$('#appThemeInput').value=a.theme;$('#appTextSizeInput').value=a.textSize;$('#appCornersInput').value=a.corners;sociallyUpdateAppearancePreview()});
 $('#appearanceModal').addEventListener('click',e=>{if(e.target.id==='appearanceModal')closeModal('appearanceModal')});
 sociallyApplyAppearance(sociallyReadAppearance());
 
