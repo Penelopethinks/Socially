@@ -167,19 +167,107 @@ function sociallyCleanLegacyAvatars(){
  const feminineNames=new Set(['sophie','emma','olivia','ava','mia','isabella','sophia','charlotte','amelia','harper','evelyn','abigail','emily','elizabeth','sofia','grace','chloe','ella','scarlett','lily','hannah','aria','zoe','nora','ellie','stella','lucy','ruby','penelope','mila','hazel','layla','aurora','violet','alice','claire','maya','sadie','anna','leah','natalie','audrey','brooklyn','savannah','bella','sarah','elena','jessica','madison','addison','paisley','skylar','everly','ivy','willow','luna','piper','quinn','reese','taylor','jasmine','allison','katherine','lauren','molly','rose','juliet','faith','daisy','summer','cora','lola','june','delilah','freya','athena','morgan','riley','bailey','mackenzie','kennedy','jordan','kendall','blake','payton','teagan','kylie','sienna','clara','isla','sadie','nina','anastasia','alina','maria','camila','valentina','gabriella','victoria','melody','lydia','julia','serena','sabrina','paige','phoebe','laura','brooke','kate','michelle','natalia','sarah','lillian','allie','ivy','mckenna','lila','madeline','adeline','juliana','danielle','diana','alexandra','miriam','jane','mary','christina','caroline','francesca','poppy','maisie','freya','imogen','georgia','sloane','marley','wren','blair','noelle','celeste','bianca','eve','lyra','marina','kira','sasha','melissa','jocelyn','tessa','lena','mina','yuna','ayla','naomi','anaya','zara','aisha','fatima','priya','anika','keira','maia','sarah','talia','esme','elise','heidi','livia','margot','frankie','annie','jenny','jules','alexis','kimberly','brielle','brianna','jennifer','kelsey','megan','rebecca','rachel','amanda','ashley','amber','chelsea','courtney','kristen','erin','heather','paula','susan','donna','wendy','linda','patricia','carla','sylvia','gloria','teresa','irene','edith','marie','marilyn','joanna','joelle','daphne','robin','shannon','casey','devon','sam','alex']);
  state.people.forEach(p=>{if(!/^extra\d+$/.test(p.id))return;const first=(p.name||'').split(' ')[0].toLowerCase();const gender=feminineNames.has(first)?'women':'men';const number=(parseInt(p.id.replace('extra',''),10)%99)+1;p.avatar='https://randomuser.me/api/portraits/'+gender+'/'+number+'.jpg'});
 }
+const sociallyPhotoLibrary = [
+ ['photo-1517248135467-4c7edcad34c4','food','restaurant table'],
+ ['photo-1500530855697-b586d89ba3ee','travel','scenic landscape'],
+ ['photo-1500534623283-312aade485b7','travel','open road'],
+ ['photo-1493246507139-91e8fad9978e','nature','mountain lake'],
+ ['photo-1518837695005-2083093ee35b','ocean','ocean waves'],
+ ['photo-1507525428034-b723cf961d3e','travel','sunny beach'],
+ ['photo-1519681393784-d120267933ba','nature','mountain at dusk'],
+ ['photo-1470770841072-f978cf4d019e','nature','lakeside view'],
+ ['photo-1511497584788-876760111969','nature','forest trees'],
+ ['photo-1470252649378-9c29740c9fa8','nature','golden sunrise'],
+ ['photo-1441974231531-c6227db76b6e','nature','forest path'],
+ ['photo-1501785888041-af3ef285b470','travel','lake and mountains'],
+ ['photo-1529139574466-a303027c1d8b','style','street style'],
+ ['photo-1490481651871-ab68de25d43d','style','colorful outfit'],
+ ['photo-1565299624946-b28f40a0ae38','food','pizza night'],
+ ['photo-1565958011703-44f9829ba187','food','celebration cake'],
+ ['photo-1555939594-58d7cb561ad1','food','shared meal'],
+ ['photo-1509440159596-0249088772ff','food','fresh bread'],
+ ['photo-1551024506-0bccd828d307','food','sweet treats'],
+ ['photo-1555507036-ab1f4038808a','food','bakery treats'],
+ ['photo-1494972308805-463bc619d34e','flowers','flowers in bloom'],
+ ['photo-1497250681960-ef046c08a56e','home','leafy houseplant'],
+ ['photo-1513475382585-d06e58bcb0e0','creative','art supplies'],
+ ['photo-1600210492486-724fe5c67fb0','home','sunny living room'],
+ ['photo-1600607687939-ce8a6c25118c','home','calm interior'],
+ ['photo-1543466835-00a7907e9de1','pets','happy dog'],
+ ['photo-1552053831-71594a27632d','pets','golden dog outdoors'],
+ ['photo-1517849845537-4d257902454a','pets','dog portrait'],
+ ['photo-1495474472287-4d71bcdd2085','cafe','coffee and a treat'],
+ ['photo-1501339847302-ac426a4a7cbb','cafe','cozy cafe'],
+ ['photo-1512820790803-83ca734da794','books','bookshelf favorites'],
+ ['photo-1519682337058-a94d519337bc','books','reading nook'],
+ ['photo-1452860606245-08befc0ff44b','creative','creative workspace'],
+ ['photo-1513364776144-60967b0f800f','creative','painting session'],
+ ['photo-1517649763962-0c623066013b','outdoors','bike ride'],
+ ['photo-1500534314209-a25ddb2bd429','travel','desert scenery'],
+ ['photo-1464822759023-fed622ff2c3b','nature','dramatic peaks'],
+ ['photo-1500534314209-a25ddb2bd429','travel','desert road'],
+ ['photo-1490750967868-88aa4486c946','flowers','bright flower bunch'],
+ ['photo-1445116572660-236099ec97a0','cafe','cafe corner'],
+ ['photo-1483985988355-763728e1935b','style','fashion browsing'],
+ ['photo-1616486338812-3dadae4b4ace','home','decor details'],
+ ['photo-1494438639946-1ebd1d20bf85','books','quiet reading time'],
+ ['photo-1515377905703-c4788e51af15','style','wardrobe details'],
+ ['photo-1511988617509-a57c8a288659','friends','friends spending time'],
+ ['photo-1529156069898-49953e39b3ac','friends','day out together'],
+ ['photo-1492684223066-81342ee5ff30','events','colorful event lights'],
+ ['photo-1470229722913-7c0e2dbbafd3','music','music night'],
+ ['photo-1500534623283-312aade485b7','travel','weekend getaway'],
+ ['photo-1519681393784-d120267933ba','nature','starry mountain view'],
+ ['photo-1470770841072-f978cf4d019e','nature','peaceful waterside'],
+ ['photo-1523413651479-597eb2da0ad6','home','garden details'],
+ ['photo-1490750967868-88aa4486c946','flowers','spring colors'],
+ ['photo-1509440159596-0249088772ff','food','fresh bakery loaf'],
+ ['photo-1512820790803-83ca734da794','books','bookshop browsing'],
+ ['photo-1495474472287-4d71bcdd2085','cafe','coffee break'],
+ ['photo-1543466835-00a7907e9de1','pets','dog being adorable'],
+ ['photo-1511497584788-876760111969','nature','green escape']
+];
+const sociallyPostFormats = [
+ (t)=>'TINY DISCOVERY ✨ Found a new favorite detail: '+t+'. What little thing made your day better?',
+ (t)=>'THIS OR THAT 💭 For a day like this, would you pick '+t+' or a totally different adventure?',
+ (t)=>'MINI PHOTO DUMP 📸 One frame from today featuring '+t+'. Give this moment a title!',
+ (t)=>'RATE THE VIBE ⭐ I’m giving this '+(7+Math.floor(Math.random()*4))+'/10 for '+t+'. What would you rate it?',
+ (t)=>'UNPOPULAR OPINION 👀 '+t+' deserves a little more appreciation. Agree, or change my mind?',
+ (t)=>'WEEKEND IDEA 💡 Put '+t+' on your list of small things to enjoy. What would you add?',
+ (t)=>'QUICK QUESTION 💌 What song would be the soundtrack for this '+t+' moment?',
+ (t)=>'THE LITTLE THINGS 🌷 Today’s reminder: make room for '+t+' and the things that make an ordinary day feel special.',
+ (t)=>'CHOOSE A SIDE 🎨 Team cozy '+t+' or team bold '+t+'? There is no wrong answer.',
+ (t)=>'STORY TIME 📖 This photo feels like the beginning of a story about '+t+'. What happens next?',
+ (t)=>'SAVE THIS IDEA 📌 A little inspiration for '+t+'. Future-you might be glad you saved this one.',
+ (t)=>'CAMERA ROLL PICK 📷 This one almost stayed in the camera roll. Glad it made it out. The vibe: '+t+'.'
+];
 function sociallyFreshContent(){
  const visitId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
- const shuffled=state.people.filter(p=>p.id.startsWith('community')).sort(()=>Math.random()-.5).slice(0,12);
- shuffled.slice(0,8).forEach((p,i)=>{
-  const topic=sociallyInterests[Math.floor(Math.random()*sociallyInterests.length)];
-  state.posts.unshift({id:'visit-'+visitId+'-'+i,user:p.id,image:topic.image,caption:topic.caption[Math.floor(Math.random()*topic.caption.length)],location:p.location,time:i===0?'just now':(i*7+2)+' min ago',likes:12+Math.floor(Math.random()*430),liked:false,saved:false,comments:[],visitGenerated:true,filterName:['none','bright','warm','soft','vivid'][Math.floor(Math.random()*5)]});
+ const recentlyUsed=new Set();
+ try{JSON.parse(localStorage.getItem('socially-recent-photo-ids')||'[]').forEach(x=>recentlyUsed.add(x))}catch(e){}
+ let available=sociallyPhotoLibrary.filter(x=>!recentlyUsed.has(x[0]));
+ if(available.length<24){recentlyUsed.clear();available=sociallyPhotoLibrary.slice()}
+ for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]]}
+ const chosen=available.slice(0,24);
+ const people=state.people.filter(p=>p.id.startsWith('community'));
+ for(let i=people.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[people[i],people[j]]=[people[j],people[i]]}
+ const chosenPeople=people.slice(0,24);
+ const formats=sociallyPostFormats.slice();
+ for(let i=formats.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[formats[i],formats[j]]=[formats[j],formats[i]]}
+ const freshPosts=chosen.slice(0,18).map((item,i)=>{
+  const person=chosenPeople[i%chosenPeople.length];
+  const image='https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1100&q=88';
+  const caption=formats[i%formats.length](item[2]);
+  const tags=['#littlemoments','#onthefeed','#todaysthoughts','#weekendvibes','#findyourinspo','#socially'][Math.floor(Math.random()*6)];
+  return {id:'visit-'+visitId+'-'+i,user:person.id,image,caption:caption+' '+tags,location:person.location||'Somewhere lovely',time:i===0?'just now':(i*3+1)+' min ago',likes:8+Math.floor(Math.random()*640),liked:false,saved:false,comments:[],visitGenerated:true,filterName:['none','bright','warm','soft','vivid'][Math.floor(Math.random()*5)]};
  });
- shuffled.slice(0,6).forEach((p,i)=>{
-  const topic=sociallyInterests[(i+2)%sociallyInterests.length];
-  state.stories.unshift({user:p.id,image:topic.image,caption:topic.caption[Math.floor(Math.random()*topic.caption.length)],time:'new story',visitGenerated:true});
- });
- state.posts=state.posts.filter(p=>!p.visitGenerated||state.posts.indexOf(p)<56);
- state.stories=state.stories.slice(0,60);
+ const freshStories=chosen.slice(18,24).map((item,i)=>({user:chosenPeople[i+18].id,image:'https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1000&q=88',caption:'A little '+item[2]+' moment ✨',time:'new story',visitGenerated:true}));
+ state.posts=state.posts.filter(p=>!p.visitGenerated);
+ state.posts=[...freshPosts,...state.posts];
+ state.stories=state.stories.filter(st=>!st.visitGenerated);
+ state.stories=[...freshStories,...state.stories].slice(0,60);
+ const nextRecent=[...chosen.map(x=>x[0]),...Array.from(recentlyUsed)].slice(0,24);
+ try{localStorage.setItem('socially-recent-photo-ids',JSON.stringify(nextRecent))}catch(e){}
  persist();
 }
 function sociallyEditorFilter(){
