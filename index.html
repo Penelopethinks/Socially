@@ -257,13 +257,13 @@ function sociallyFreshContent(){
   return {id:'visit-'+visitId+'-'+i,user:person.id,image,caption:caption+' '+tags,location:person.location||'Somewhere lovely',time:i===0?'just now':(i*3+1)+' min ago',likes:8+Math.floor(Math.random()*640),liked:false,saved:false,comments:[],visitGenerated:true,filterName:['none','bright','warm','soft','vivid'][Math.floor(Math.random()*5)]};
  });
  const freshStories=chosen.slice(18,24).map((item,i)=>({user:chosenPeople[i+18].id,image:'https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1000&q=88',caption:'A little '+item[2]+' moment ✨',time:'new story',visitGenerated:true}));
+ // Two curated demo videos are added only when this page refreshes.
+ freshPosts.push({id:'visit-'+visitId+'-video-nature',user:chosenPeople[0].id,video:'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',image:'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1100&q=88',caption:'A tiny nature-film moment 🌸 Tap play for the full clip.',location:chosenPeople[0].location||'Somewhere lovely',time:'just now',likes:126,liked:false,saved:false,comments:[],visitGenerated:true});
+ freshPosts.push({id:'visit-'+visitId+'-video-bunny',user:chosenPeople[1].id,video:'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',image:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1100&q=88',caption:'A polished animated short 🎬 Tap play when you’re ready.',location:chosenPeople[1].location||'Somewhere lovely',time:'just now',likes:204,liked:false,saved:false,comments:[],visitGenerated:true});
  state.posts=state.posts.filter(p=>!p.visitGenerated);
  state.posts=[...freshPosts,...state.posts];
  state.stories=state.stories.filter(st=>!st.visitGenerated);
  state.stories=[...freshStories,...state.stories].slice(0,60);
- // Two curated demo videos are added only when this page refreshes.
- freshPosts.push({id:'visit-'+visitId+'-video-nature',user:chosenPeople[0].id,video:'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',image:'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1100&q=88',caption:'A tiny nature-film moment 🌸 Tap play for the full clip.',location:chosenPeople[0].location||'Somewhere lovely',time:'just now',likes:126,liked:false,saved:false,comments:[],visitGenerated:true});
- freshPosts.push({id:'visit-'+visitId+'-video-bunny',user:chosenPeople[1].id,video:'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',image:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1100&q=88',caption:'A polished animated short 🎬 Tap play when you’re ready.',location:chosenPeople[1].location||'Somewhere lovely',time:'just now',likes:204,liked:false,saved:false,comments:[],visitGenerated:true});
  const nextRecent=[...chosen.map(x=>x[0]),...Array.from(recentlyUsed)].slice(0,24);
  try{localStorage.setItem('socially-recent-photo-ids',JSON.stringify(nextRecent))}catch(e){}
  persist();
