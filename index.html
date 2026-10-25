@@ -284,18 +284,24 @@ const sociallyPhotoLibrary = [
  ['photo-1519681393784-d120267933ba','nature','a starry mountain evening']
 ];
 const sociallyPostFormats = [
- (t)=>'TINY DISCOVERY ✨ Found a new favorite detail: '+t+'. What little thing made your day better?',
- (t)=>'THIS OR THAT 💭 For a day like this, would you pick '+t+' or a totally different adventure?',
- (t)=>'MINI PHOTO DUMP 📸 One frame from today featuring '+t+'. Give this moment a title!',
- (t)=>'RATE THE VIBE ⭐ I’m giving this '+(7+Math.floor(Math.random()*4))+'/10 for '+t+'. What would you rate it?',
- (t)=>'UNPOPULAR OPINION 👀 '+t+' deserves a little more appreciation. Agree, or change my mind?',
- (t)=>'WEEKEND IDEA 💡 Put '+t+' on your list of small things to enjoy. What would you add?',
- (t)=>'QUICK QUESTION 💌 What song would be the soundtrack for this '+t+' moment?',
- (t)=>'THE LITTLE THINGS 🌷 Today’s reminder: make room for '+t+' and the things that make an ordinary day feel special.',
- (t)=>'CHOOSE A SIDE 🎨 Team cozy '+t+' or team bold '+t+'? There is no wrong answer.',
- (t)=>'STORY TIME 📖 This photo feels like the beginning of a story about '+t+'. What happens next?',
- (t)=>'SAVE THIS IDEA 📌 A little inspiration for '+t+'. Future-you might be glad you saved this one.',
- (t)=>'CAMERA ROLL PICK 📷 This one almost stayed in the camera roll. Glad it made it out. The vibe: '+t+'.'
+ (t)=>'Had to stop for a second when I saw '+t+'. The colors are doing all the work here.',
+ (t)=>'Current status: thinking about '+t+' more than I probably need to. No regrets.',
+ (t)=>'Proof that '+t+' can make an ordinary Tuesday look pretty excellent.',
+ (t)=>'Not a professional review, but '+t+' gets a very enthusiastic 9/10 from me.',
+ (t)=>'I would absolutely take the longer route if it meant seeing '+t+' again.',
+ (t)=>'Adding '+t+' to the list of things I want to do more often.',
+ (t)=>'The camera roll has spoken. This one deserved a spot outside my phone.',
+ (t)=>'Honest question: what would you pair with '+t+'? I need recommendations.',
+ (t)=>'I came for one thing and somehow ended up appreciating '+t+'. That tracks.',
+ (t)=>'A good reminder that taste is personal—and I happen to really like '+t+'.',
+ (t)=>'If this had a soundtrack, I think it would be something upbeat with the windows down. Featuring '+t+'.',
+ (t)=>'Today’s highlight, no complicated explanation needed: '+t+'.',
+ (t)=>'Some things look even better in person. '+t+' is definitely one of them.',
+ (t)=>'Would you make plans around '+t+', or just be happy to stumble across it?',
+ (t)=>'Keeping this as inspiration for the next time I need a fresh idea involving '+t+'.',
+ (t)=>'A few things I appreciate about '+t+': the look, the feeling, and the fact that I noticed it.',
+ (t)=>'Unexpected favorite from today: '+t+'. I wasn’t planning on it, but here we are.',
+ (t)=>'The kind of thing that makes me want to get out and do something instead of scrolling all afternoon: '+t+'.'
 ];
 function sociallyFreshContent(){
  const visitId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
@@ -316,10 +322,10 @@ function sociallyFreshContent(){
   const person=chosenPeople[i%chosenPeople.length];
   const image='https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1100&q=88';
   const caption=formats[i%formats.length](item[2]);
-  const tags=['#littlemoments','#onthefeed','#todaysthoughts','#weekendvibes','#findyourinspo','#socially'][Math.floor(Math.random()*6)];
+  const tags=['#onthefeed','#todaysthoughts','#weekendvibes','#findyourinspo','#socially',''][Math.floor(Math.random()*6)];
   return {id:'visit-'+visitId+'-'+i,user:person.id,image,caption:caption+' '+tags,location:person.location||'Somewhere lovely',time:i===0?'just now':(i*3+1)+' min ago',likes:8+Math.floor(Math.random()*640),liked:false,saved:false,comments:[],visitGenerated:true,filterName:['none','bright','warm','soft','vivid'][Math.floor(Math.random()*5)]};
  });
- const freshStories=chosen.slice(18,24).map((item,i)=>({user:chosenPeople[i+18].id,image:'https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1000&q=88',caption:'A little '+item[2]+' moment ✨',time:'new story',visitGenerated:true}));
+ const freshStories=chosen.slice(18,24).map((item,i)=>({user:chosenPeople[i+18].id,image:'https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1000&q=88',caption:['Didn’t expect to find this today, but I’m glad I did.','A view worth keeping in the camera roll.','Would happily come back here.','The details are better than the photo can explain.','Adding this to my recommendations list.','This made me pause for a second—in a good way.'][i%6]+' '+item[2],time:'new story',visitGenerated:true}));
 
  state.posts=state.posts.filter(p=>!p.visitGenerated&&!p.video&&!p.videoUrl&&!p.mediaType?.includes?.('video'));
  state.posts=[...freshPosts,...state.posts];
@@ -341,7 +347,7 @@ function sociallyLoadMore(){
  const people=state.people.filter(p=>p.id.startsWith('community'));
  for(let i=people.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[people[i],people[j]]=[people[j],people[i]]}
  const visitId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
- const posts=chosen.map((item,i)=>{const person=people[(i+Math.floor(Math.random()*people.length))%people.length];const caption=sociallyPostFormats[Math.floor(Math.random()*sociallyPostFormats.length)](item[2]);return {id:'more-'+visitId+'-'+i,user:person.id,image:'https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1100&q=88',caption:caption+' '+['#newfinds','#littlemoments','#yourturn','#inspirationstation','#socially'][Math.floor(Math.random()*5)],location:person.location||'Somewhere lovely',time:'just now',likes:5+Math.floor(Math.random()*700),liked:false,saved:false,comments:[],visitGenerated:true,filterName:['none','bright','warm','soft','vivid'][Math.floor(Math.random()*5)]}});
+ const posts=chosen.map((item,i)=>{const person=people[(i+Math.floor(Math.random()*people.length))%people.length];const caption=sociallyPostFormats[Math.floor(Math.random()*sociallyPostFormats.length)](item[2]);return {id:'more-'+visitId+'-'+i,user:person.id,image:'https://images.unsplash.com/'+item[0]+'?auto=format&fit=crop&w=1100&q=88',caption:caption+' '+['#newfinds','#yourturn','#inspirationstation','#socially',''][Math.floor(Math.random()*5)],location:person.location||'Somewhere lovely',time:'just now',likes:5+Math.floor(Math.random()*700),liked:false,saved:false,comments:[],visitGenerated:true,filterName:['none','bright','warm','soft','vivid'][Math.floor(Math.random()*5)]}});
  state.posts=state.posts.concat(posts);
  const nextRecent=[...chosen.map(x=>x[0]),...Array.from(recentlyUsed)].slice(0,24);
  try{localStorage.setItem('socially-recent-photo-ids',JSON.stringify(nextRecent))}catch(e){}
