@@ -121,6 +121,32 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const pics={mia:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=85',olivia:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=240&q=85',ethan:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=240&q=85',noah:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=240&q=85',ava:'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=240&q=85',leo:'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=240&q=85',you:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=85'};
 const photo={cafe:'https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=1000&q=88',outfit:'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=88',baking:'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1000&q=88',coast:'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=1000&q=88',flowers:'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1000&q=88',mountain:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=88',art:'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1000&q=88',room:'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=88'};
+const sociallyPhotoPool=[...Object.values(photo),
+'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1494972308805-463bc619d34e?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1000&q=88',
+'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1000&q=88'
+];
 const seed={
  user:{id:'you',name:'Your Name',handle:'yourhandle',bio:'Collecting little moments ✨',avatar:pics.you,kind:'human',followers:18,following:24},
  people:[
@@ -152,8 +178,31 @@ seed.posts.push(...extraPosts);
 seed.stories.push(...extraStories);
 
 let state=loadState(),activeNav='home',profileId='you',chatId='mia',feedFilter='for-you',searchTerm='';
+function sociallyFreshPhotoBatch(count){
+ let history=[];try{history=JSON.parse(localStorage.getItem('socially-photo-history')||'[]')}catch(e){}
+ const byPhotoId=new Map();
+ sociallyPhotoPool.forEach(url=>{const id=(url.match(/photo-[^?]+/)||[])[0]||url;if(!byPhotoId.has(id))byPhotoId.set(id,url)});
+ const all=[...byPhotoId.values()],recent=new Set(history.slice(-18));
+ let candidates=all.filter(url=>!recent.has((url.match(/photo-[^?]+/)||[])[0]||url));
+ if(candidates.length<count)candidates=all.slice();
+ for(let i=candidates.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[candidates[i],candidates[j]]=[candidates[j],candidates[i]]}
+ const chosen=candidates.slice(0,count);
+ try{localStorage.setItem('socially-photo-history',JSON.stringify([...history,...chosen.map(url=>(url.match(/photo-[^?]+/)||[])[0]||url]).slice(-18)))}catch(e){}
+ return chosen;
+}
+function sociallyRefreshCommunityPhotos(){
+ const posts=state.posts.filter(p=>person(p.user)?.kind==='ai');
+ const stories=state.stories.filter(story=>person(story.user)?.kind==='ai');
+ const batch=sociallyFreshPhotoBatch(posts.length+stories.length);
+ let i=0;
+ posts.forEach(p=>{p.image=batch[i++]||p.image;if(Array.isArray(p.images)&&p.images.length)p.images=[p.image,...p.images.slice(1)]});
+ stories.forEach(story=>{story.image=batch[i++]||story.image});
+ persist();
+}
+
 /* Permanently discard any video posts left in older browser-saved data. */
 state.posts=state.posts.filter(p=>!p.video&&!p.videoUrl&&!p.mediaType?.includes?.('video'));state.posts.forEach(p=>{delete p.video;delete p.videoUrl;});
+sociallyRefreshCommunityPhotos();
 let sociallySeenIds=new Set();try{sociallySeenIds=new Set(JSON.parse(localStorage.getItem('socially-seen-posts')||'[]'))}catch(e){}
 let sociallySeenView=false;
 function sociallySaveSeen(){try{localStorage.setItem('socially-seen-posts',JSON.stringify(Array.from(sociallySeenIds).slice(-2000)))}catch(e){}}
@@ -470,7 +519,7 @@ function sociallyStoryKey(story){return String(story.user)+'|'+String(story.imag
 function sociallyGetSeenStories(){try{return new Set(JSON.parse(localStorage.getItem('socially-seen-stories')||'[]'))}catch(e){return new Set()}}
 function sociallyMarkStorySeen(story){const seen=sociallyGetSeenStories();seen.add(sociallyStoryKey(story));try{localStorage.setItem('socially-seen-stories',JSON.stringify([...seen].slice(-1000)))}catch(e){}}
 function sociallyStoryIsSeen(story){return sociallyGetSeenStories().has(sociallyStoryKey(story))}
-function sociallyActivityPulse(){if(document.hidden)return;const now=Date.now();try{const last=Number(localStorage.getItem('socially-last-activity')||0);if(now-last<85000)return;localStorage.setItem('socially-last-activity',String(now))}catch(e){}const roll=Math.random(),kind=roll<.34?'visitors':roll<.68?'posts':'messages',candidates=state.people.filter(p=>p.kind==='ai');if(!candidates.length)return;const p=candidates[Math.floor(Math.random()*candidates.length)];if(kind==='visitors'){sociallyNotify('visitors',p.id,'visited your profile');return}if(kind==='posts'){const samples=[{caption:'Found a little thing that made today brighter ✨',location:'Around town'},{caption:'Current obsession: trying something new and seeing where it goes 🌷',location:'My corner of the world'},{caption:'Saving this moment before the day gets busy 📸',location:'Today’s little adventure'}],sample=samples[Math.floor(Math.random()*samples.length)],source=state.posts.find(post=>post.user===p.id)||state.posts[0],post={id:'activity-'+now,user:p.id,image:source?.image||p.avatar,caption:sample.caption,location:sample.location,time:'just now',likes:Math.floor(20+Math.random()*180),liked:false,saved:false,comments:[],followingOnly:!!p.followingByYou};state.posts.unshift(post);state.posts=state.posts.slice(0,250);persist();sociallyNotify('posts',p.id,'shared a new post: “'+sample.caption+'”');if(activeNav==='home')renderFeed();return}const topic=(p.interests||[])[0]||'something fun';state.messages[p.id]??=[];state.messages[p.id].push({from:p.id,text:'Hey! I just found something about '+topic.toLowerCase()+' that made me think of our chats ✨'});persist();sociallyNotify('messages',p.id,'sent you a message');if(activeNav==='messages'&&chatId===p.id)renderMessages()}
+function sociallyActivityPulse(){if(document.hidden)return;const now=Date.now();try{const last=Number(localStorage.getItem('socially-last-activity')||0);if(now-last<85000)return;localStorage.setItem('socially-last-activity',String(now))}catch(e){}const roll=Math.random(),kind=roll<.34?'visitors':roll<.68?'posts':'messages',candidates=state.people.filter(p=>p.kind==='ai');if(!candidates.length)return;const p=candidates[Math.floor(Math.random()*candidates.length)];if(kind==='visitors'){sociallyNotify('visitors',p.id,'visited your profile');return}if(kind==='posts'){const samples=[{caption:'Found a little thing that made today brighter ✨',location:'Around town'},{caption:'Current obsession: trying something new and seeing where it goes 🌷',location:'My corner of the world'},{caption:'Saving this moment before the day gets busy 📸',location:'Today’s little moment'},{caption:'Tiny photo dump because this week has been full of surprises 💫',location:'Lately'}],sample=samples[Math.floor(Math.random()*samples.length)],post={id:'activity-'+now,user:p.id,image:sociallyFreshPhotoBatch(1)[0],caption:sample.caption,location:sample.location,time:'just now',likes:Math.floor(20+Math.random()*180),liked:false,saved:false,comments:[],followingOnly:!!p.followingByYou};state.posts.unshift(post);state.posts=state.posts.slice(0,250);persist();sociallyNotify('posts',p.id,'shared a new post: “'+sample.caption+'”');if(activeNav==='home')renderFeed();return}const topic=(p.interests||[])[0]||'something fun';state.messages[p.id]??=[];state.messages[p.id].push({from:p.id,text:'Hey! I just found something about '+topic.toLowerCase()+' that made me think of our chats ✨'});persist();sociallyNotify('messages',p.id,'sent you a message');if(activeNav==='messages'&&chatId===p.id)renderMessages()}
 function sociallyStartActivityPulse(){if(window.sociallyActivityPulseTimer)clearInterval(window.sociallyActivityPulseTimer);window.sociallyActivityPulseTimer=setInterval(sociallyActivityPulse,90000)}
 
 function boot(){renderProfileAvatars();renderStories();renderHomeAiPeople();sociallyInitCommunityQuest();renderFeed();renderSuggestions();renderExplore();renderMessages();renderProfile();renderNotifications();sociallyStartActivityPulse();if(!localStorage.getItem('socially-welcome')){setTimeout(()=>toast('Welcome to Socially — your AI social world ✨'),600);try{localStorage.setItem('socially-welcome','1')}catch(e){}}}
